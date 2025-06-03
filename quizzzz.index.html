@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz: Mitosis y Meiosis</title>
+
+  <!-- Fuente moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --rosa: #e75480;
+      --rosa-claro: #f7c6d5;
+      --morado: #8a2be2;
+      --morado-claro: #b892ff;
+      --texto-oscuro: #3a0e42;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--rosa-claro), var(--morado-claro));
+      margin: 0;
+      padding: 40px 20px;
+      color: var(--texto-oscuro);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .quiz-container {
+      background-color: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(167, 46, 105, 0.3);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      color: var(--morado);
+      font-weight: 600;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+
+    .question {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      min-height: 60px;
+    }
+
+    .options {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 400px;
+    }
+
+    .options li {
+      margin-bottom: 15px;
+    }
+
+    .options button {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      border: 2px solid var(--rosa);
+      background-color: var(--rosa-claro);
+      color: var(--morado);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 8px rgba(231, 84, 128, 0.3);
+    }
+
+    .options button:hover {
+      background-color: var(--rosa);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    button#next-btn,
+    button#restart-btn {
+      margin-top: 25px;
+      background-color: var(--morado);
+      color: white;
+      font-weight: 600;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 7px 20px rgba(138, 43, 226, 0.5);
+      transition: background-color 0.3s ease;
+    }
+
+    button#next-btn:hover,
+    button#restart-btn:hover {
+      background-color: #6e21bb;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      min-height: 24px;
+      color: var(--morado);
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 5px 12px rgba(138, 43, 226, 0.2);
+    }
+
+    .final-message {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--rosa);
+      margin-top: 30px;
+    }
+
+    /* Animación de corazones */
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff69b4;
+      animation: float 4s infinite ease-in;
+      font-size: 1.5rem;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120%) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quiz-container {
+        padding: 20px 25px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .options button {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+      }
+      button#next-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="hearts" id="hearts"></div>
+    <h1>Bienvenida mi princesita 💖</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <ul class="options" id="options"></ul>
+      <button id="next-btn" onclick="nextQuestion()">Siguiente</button>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "¿Cuál es el propósito principal de la mitosis?",
+        options: [
+          "Reducir el número de cromosomas a la mitad",
+          "Producir células genéticamente diferentes",
+          "Generar células hijas idénticas",
+          "Fertilizar un óvulo"
+        ],
+        answer: 2
+      },
+      {
+        question: "¿En qué tipo de células ocurre la meiosis?",
+        options: [
+          "Células somáticas",
+          "Células madre",
+          "Células sexuales (gametos)",
+          "Células musculares"
+        ],
+        answer: 2
+      },
+      {
+        question: "¿Qué se muestra en esta imagen?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Mitose_-_Prophase.svg/300px-Mitose_-_Prophase.svg.png",
+        options: ["Metafase", "Profase", "Anafase", "Telofase"],
+        answer: 1
+      },
+      {
+        question: "¿Cuántas células hijas se producen al final de la mitosis?",
+        options: ["4", "2", "8", "1"],
+        answer: 1
+      },
+      {
+        question: "¿Qué etapa de la meiosis implica el entrecruzamiento genético?",
+        options: ["Anafase I", "Metafase II", "Profase I", "Telofase II"],
+        answer: 2
+      },
+      {
+        question: "¿Qué estructura se separa durante la anafase de la mitosis?",
+        options: [
+          "Los cromosomas homólogos",
+          "Las cromátidas hermanas",
+          "Las membranas nucleares",
+          "Los centriolos"
+        ],
+        answer: 1
+      },
+      {
+        question: "¿Qué ocurre durante la telofase en la mitosis?",
+        options: [
+          "Los cromosomas se alinean",
+          "Se forman dos núcleos",
+          "Las cromátidas se duplican",
+          "Los cromosomas desaparecen"
+        ],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("question").textContent = q.question;
+      const optionsEl = document.getElementById("options");
+      optionsEl.innerHTML = "";
+
+      if (q.image) {
+        const img = document.createElement("img");
+        img.src = q.image;
+        img.alt = "Imagen relacionada";
+        optionsEl.appendChild(img);
+      }
+
+      q.options.forEach((option, index) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(index);
+        li.appendChild(btn);
+        optionsEl.appendChild(li);
+      });
+
+      document.getElementById("result").textContent = "";
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentQuestion].answer;
+      const userResponse = {
+        question: questions[currentQuestion].question,
+        selected: questions[currentQuestion].options[selected],
+        correct: questions[currentQuestion].options[correct],
+        isCorrect: selected === correct
+      };
+      userAnswers.push(userResponse);
+
+      if (selected === correct) {
+        score++;
+        document.getElementById("result").textContent = "✅ ¡Correcto!";
+      } else {
+        document.getElementById("result").textContent =
+          "❌ Incorrecto. La respuesta correcta era: " +
+          questions[currentQuestion].options[correct];
+      }
+
+      const buttons = document.querySelectorAll("#options button");
+      buttons.forEach(btn => btn.disabled = true);
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        showQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    function showSummary() {
+      const quizEl = document.getElementById("quiz");
+      let summaryHTML = `
+        <h2 class="final-message">🌟 Muy bien mi princesita, eres la mejor del mundo 💕👑🌈</h2>
+        <p>Tu puntaje: ${score} de ${questions.length}</p>
+        <h3>Resumen de tus respuestas:</h3>
+        <ul style="text-align:left;">`;
+
+      userAnswers.forEach((ans, i) => {
+        summaryHTML += `
+          <li>
+            <strong>${i + 1}. ${ans.question}</strong><br>
+            Tu respuesta: <span style="color:${ans.isCorrect ? 'green' : 'red'}">${ans.selected}</span><br>
+            Respuesta correcta: <strong>${ans.correct}</strong>
+          </li><br>
+        `;
+      });
+
+      summaryHTML += `</ul><button id="restart-btn" onclick="restartQuiz()">Volver a jugar 🔄</button>`;
+      quizEl.innerHTML = summaryHTML;
+
+      launchHearts();
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = [];
+      const quizEl = document.getElementById("quiz");
+      quizEl.innerHTML = `
+        <div class="question" id="question"></div>
+        <ul class="options" id="options"></ul>
+        <button id="next-btn" onclick="nextQuestion()">Siguiente</button>
+        <div class="result" id="result"></div>
+      `;
+      showQuestion();
+      clearHearts();
+    }
+
+    function launchHearts() {
+      const hearts = document.getElementById("hearts");
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.style.left = Math.random() * 100 + "%";
+        heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+        heart.textContent = "💖";
+        hearts.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+      }
+    }
+
+    function clearHearts() {
+      document.getElementById("hearts").innerHTML = "";
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
